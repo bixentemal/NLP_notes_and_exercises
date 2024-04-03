@@ -56,4 +56,9 @@ $P(w_{n} \mid w_{1:n-1}) \sim P(w_{n} \mid w_{n-N+1:n-1}) $
 
 ### maximum likelihood estimation or MLE
 
-// TO BE CONTINUED
+MLE estimate for the parameters of an n-gram model by getting counts from a corpus, and normalizing the counts so that they lie between 0 and 1
+
+$P(w_{n} \mid w_{1:n-1}) =
+$
+$\frac{C( w_{n-1}w_{n})}{\sum_{w} C( w_{n-1}w_)}
+$
