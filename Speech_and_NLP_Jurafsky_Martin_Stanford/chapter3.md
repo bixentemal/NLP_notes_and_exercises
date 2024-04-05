@@ -58,7 +58,37 @@ $P(w_{n} \mid w_{1:n-1}) \sim P(w_{n} \mid w_{n-N+1:n-1}) $
 
 MLE estimate for the parameters of an n-gram model by getting counts from a corpus, and normalizing the counts so that they lie between 0 and 1
 
+For bigram model :
+
 $P(w_{n} \mid w_{1:n-1}) =
 $
 $\frac{C( w_{n-1}w_{n})}{\sum_{w} C( w_{n-1}w_)}
 $
+
+We can generalize for N-gram model :
+
+$P(w_{n} \mid w_{1-N+1:n-1}) =
+$
+$\frac{C( w_{n-N+1}w_{n})}{\sum_{w} C( w_{n-N+1}w_)}
+$
+
+This ratio is called a <b>relative frequency</b>. 
+
+Practical example for bigram :
+
+```
+P(i|<s>) = 0.25 
+P(english|want) = 0.0011
+P(food|english) = 0.5 
+P(</s>|food) = 0.68
+```
+probability of the complete sentence <pre> i want english food </pre>
+can be calculated this way
+```
+P(<s> i want english food </s>)
+= P(i|<s>) x P(want|i) x P(english|want) x P(food|english)x P(</s>|food) 
+= .25×.33×.0011×0.5×0.68
+= .000031
+```
+
+We always represent and compute language model probabilities in log format as <b>log probabilities</b> since the more probabilities we multiply together, the smaller the product becomes.
