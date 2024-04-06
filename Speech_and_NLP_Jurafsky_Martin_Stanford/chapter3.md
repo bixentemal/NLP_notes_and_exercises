@@ -9,7 +9,7 @@ subtitle: Speech and Language Processing. Daniel Jurafsky & James H. Martin.
 
 n-gram :
 - is the simplest kind of language model
-- can mean a probabilistic model that can estimate the probability of a word given the n-1 previous words.
+- probabilistic model that can estimate the probability of a word given the n-1 previous words.
 - Can also be used to to assign probabilities to entire sequences.
 - != neural large language models (i.e transformers), but usefull to introduce concepts (like training and test sets, perplexity, sampling, and interpolation).
 
@@ -41,6 +41,8 @@ P(X1...Xn) = P(X1) P(X2|X1) P(X3|X1:2) ... P(Xn|X1:n−1)
 
 
  we could estimate the joint probability of an entire sequence of words by multiplying together a number of conditional probabilities.
+
+The bigram model <b>approximates the probability of a word given all the previous words</b> P(wn|w1:n−1) by using only the conditional probability of the preceding word P(wn|wn−1). 
 
  The intuition of the n-gram model is that instead of computing the probability of a word given its entire history, we can approximate the history by just the last few words.
 
@@ -74,6 +76,39 @@ $
 
 This ratio is called a <b>relative frequency</b>. 
 
+<pre>
+                                   ┌────────────────────┐                                       
+                                   │   Language model   │                                       
+                                   └────────────────────┘                                       
+                                              △                                                 
+                                              │                                                 
+                                   ┌────────────────────┐                                       
+                                   │       N-GRAM       │                                       
+                                   └───┬────────────────┘                                       
+               Markov assumption       │                                                        
+                                  ─────┘                                                        
+                                 △                                                              
+                                 │                                                              
+┌────────────────────┐ ┌────────────────────┐ ┌────────────────────┐      ┌────────────────────┐
+│       1-GRAM       │ │       2-GRAM       │ │       3-GRAM       │      │       N-GRAM       │
+│     (unigram)      │ │                    │ │                    │ ...  │                    │
+└────────────────────┘ └────────────────────┘ └────────────────────┘      └────────────────────┘
+                                              │                                                 
+                                              │                                                 
+                                              │ to estimate probabilities of a n-gram           
+                                              │              we use MLE                         
+                                              │                                                 
+                                              ▼                                                 
+                                                                                                
+                                    Estimated using MLE                                         
+                                 (counts from a corpus, and                                     
+                               normalizing the counts so that                                   
+                                 they lie between 0 and 1)                                      
+                                                                                                
+                                                                                                
+
+</pre>
+
 Practical example for bigram :
 
 ```
@@ -92,3 +127,46 @@ P(<s> i want english food </s>)
 ```
 
 We always represent and compute language model probabilities in log format as <b>log probabilities</b> since the more probabilities we multiply together, the smaller the product becomes.
+
+p1×p2×p3×p4 =exp(logp1+logp2+logp3+logp4)
+
+# 3.2 Training and test set
+
+<pre>
+                                                                                                  
+                                              Evaluated once at the very end                      
+                                                                                                  
+                                   ┌───────────────────────────────────────────────────┐          
+                                   │                                                   │          
+                                   │                                                   ▼          
+┌────────────────────┐      ┌────────────┐        ┌────────────────────┐    ┌────────────────────┐
+│    TRAINING SET    │      │   Model    │        │  DEVELOPMENT SET   │    │      TEST SET      │
+│                    ◀──────▶            │        │                    │    │                    │
+└────────────────────┘      └────────────┘        └────────────────────┘    └────────────────────┘
+                                   │                         ▲                                    
+                                   │                         │                                    
+                                   └─────────────────────────┘                                    
+                                                                                                  
+                                 Multiple testing                                    
+                                                                                                  
+</pre>
+
+Due to multiple testing on Dev set, we create an adherence, this introduces a bias that makes the probabilities all look too high, and causes huge inaccuracies in <<b>perplexity </b>
+
+
+# 3.3 Evaluating Language Models: Perplexity
+
+The perplexity (sometimes abbreviated as PP or PPL) of a language model on a test set is the inverse probability of the test set (one over the probability of the test set), normalized by the number of words N(i.e per word perplexity)
+
+For a test set W = w1 w2 . . . wN ,:
+
+perplexity(W) = $\sqrt[N]{\prod_{i = 1}^{N}\frac{1}{P(w_n|w_1... w_i-1)}}$
+
+<b>Perplexity has an inverse relationship with probability => the lower the perplexity, the better the model</b>. 
+
+So a lower perplexity can tell us that a language model is a better predictor of the words in the test set.
+
+since this sequence will cross many sentence boundaries, if our vocabulary includes a between-sentence token \<EOS\> or separate begin- and end-sentence markers \<s\> and \</s\> then we can include them in the probability computation. If we do, then we also include one token per sentence in the total count of word tokens N.
+
+# 3.4 SAMPLING SENTENCES FROM A LANGUAGE MODEL 11
+
