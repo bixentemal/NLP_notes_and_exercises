@@ -170,3 +170,125 @@ since this sequence will cross many sentence boundaries, if our vocabulary inclu
 
 # 3.4 SAMPLING SENTENCES FROM A LANGUAGE MODEL 11
 
+Sampling from a distribution means to choose random points according to their likelihood
+
+= technique of visualizing
+
+Example for unigram :
+Imagine all the words of the English language covering the probability space between 0 and 1, each word covering an interval proportional to its frequency.
+We choose a random value between 0 and 1, find that point on the probability line, and print the word whose interval includes this chosen value. We continue choosing random numbers and generating words until we randomly generate the sentence-final token \</s\>.
+
+
+<pre>
+                                                                                    
+         the               of          a       to      in                           
+┌────────────────────┬─────────────┬────────┬───────┬───────┐                       
+│        0.06        │    0.03     │  0.02  │ 0.02  │ 0.02  │                       
+└────────────────────┴─────────────┴────────┴───────┴───────┘                       
+                                                                                    
+│                    │             │        │       │           ...                 
+└────────────────────┴─────────────┴────────┴───────┴─────────                      
+                    .06           .09      .11     .13      cumulative probability  
+</pre>
+
+# 3.5 Generalization and Zeros
+
+The n-gram model depends on the training corpus.
+
+Another implication is that n-grams do a better and better job of modeling the training corpus as we increase the value of N.
+
+Exemple of sampling on a model generated from the shakespare corpus for unigram, 2-gram, 3-gram, 4-gram respectivelly :
+
+<pre>
+1-gram
+–To him swallowed confess hear both. Which. Of save on trail for are ay device and
+rote life have
+–Hill he late speaks; or! a more to leg less first you enter
+
+2-gram
+–Why dost stand forth thy canopy, forsooth; he is this palpable hit the King Henry. Live king. Follow.
+gram –What means, sir. I confess she? then all sorts, he is trim, captain.
+
+3-gram
+–Fly, and will rid me these news of price. Therefore the sadness of parting, as they say,’tis done.
+gram –This shall forbid it should be branded, if renown made it empty.
+
+4-gram
+–King Henry. What! I will go seek the traitor Gloucester. Exeunt some of the watch. A
+great banquet serv’d in; gram –It cannot be but so.
+
+</pre>
+
+The more the n (in n-gram), the more coherent the sampling result,(and the more sparse the matrix)
+
+another similar samplong example with the  Wall Street Journal
+
+<pre>
+1 gram
+Months the my and issue of year foreign new exchange’s september
+were recession exchange new endorsed a acquire to six executives
+
+2
+Last December through the way to preserve the Hudson corporation N.
+B. E. C. Taylor would seem to complete the major central planners one gram point five percent of U. S. E. has already old M. X. corporation of living
+on information such as more frequently fishing to keep her
+
+3
+They also point to ninety nine point six billion dollars from two hundred four oh six three percent of the rates of interest stores as Mexico and
+gram Brazil on market conditions
+</pre>
+
+=> comparing both, we can see the adherence to the training corpus
+
+conclusion :
+
+To build a language model for translating legal documents, we need a training corpus of legal documents. 
+
+To build a language model for a question-answering system, we need a training corpus of questions.
+
+etc...
+
+It is equally important to get training data in the appropriate dialect or variety, especially when processing social media posts or spoken transcripts.
+
+<b>sparsity</b> isa problem : if a n-gram is not present in the training set but present on the test set, some evaluation which are syntaxically correct will be returned with a P(x|y) = 0 on the test set.
+
+These <b>zeros</b>—things that don’t ever occur in the training set but do occur in the test set—are a problem for two reasons.
+
+- First, their presence means we are underestimating the probability of all sorts of words that might occur, which will hurt the performance of any application we want to run on this data.
+
+- Second, if the probability of any word in the test set is 0, the entire probability of the test set is 0. By definition, perplexity is based on the inverse probability of the
+closed vocabulary
+test set. Thus if some words have zero probability, we can’t compute perplexity at all, since we can’t divide by 0!
+
+2 kinds of zeros :
+- n-gram probability is zero because they occur in a novel test set context -> <b>smoothing</b> algorithm
+- unknown words
+
+### Unknown Words
+
+2 cases
+- <b>closed vocabulary</b> : no unknown words (since the space of possible words are known in advance)
+- <b>open vocabulary</b> : in this case we can have <b>out of vocabulary (OOV) words</b>
+
+The percentage of OOV words that appear in the test set is called the <b>OOV rate</b>.
+
+One way to close and open vocabulary system is to :
+1. Choose a vocabulary (word list) that is fixed in advance.
+2. Convert in the training set any word that is not in this set (any OOV word) to the unknown word token <UNK> in a text normalization step.
+3. Estimate the probabilities for <UNK>from its counts just like any other regular word in the training set.
+
+# 3.6 Smoothing
+
+smoothing, also called discounting
+
+## 3.6.1 Laplace Smoothing
+
+The simplest way to do smoothing is to add one to all the n-gram counts, before we normalize them into probabilities. All the counts that used to be zero will now have a count of 1, the counts of 1 will be 2, and so on. This algorithm is called Laplace smoothing.
+
+//
+
+## 3.6.2 Add-k smoothing
+
+## 3.6.3 Backoff and Interpolation
+
+# 3.7 Huge Language Models and Stupid Backoff
