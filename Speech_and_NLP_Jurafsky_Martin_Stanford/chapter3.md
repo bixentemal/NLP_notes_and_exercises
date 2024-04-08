@@ -285,10 +285,30 @@ smoothing, also called discounting
 
 The simplest way to do smoothing is to add one to all the n-gram counts, before we normalize them into probabilities. All the counts that used to be zero will now have a count of 1, the counts of 1 will be 2, and so on. This algorithm is called Laplace smoothing.
 
-//
+Here is an <b>unsmoothed</b> maximum likelihood estimate of the unigram probability of the word wi is its count ci normalized by the total number of word tokens N :
+
+$P({w}_i) = \frac{{c}_i}{N}$
+
+Now applying Laplace smoothing (also called add-one smoothing)
+
+${P}_{Laplace}({w}_i) = \frac{{c}_i+1}{N+V}$
+
+Adjusted count c∗ is easier to compare directly with the MLE counts and can be turned into a probability like an MLE count by normalizing by N
+
+${c}_i^* = ({c}_i+1)\frac{N}{N+V}$
+
+From this we can create a relative discount dc, the ratio of the discounted counts to the original counts:
+
+${d}_c=\frac{{c}^*}{c}$
 
 ## 3.6.2 Add-k smoothing
 
+laplace smoothing = Add-k smoothing, with k=1
+
+${P}^*_{Add-k}({w}_i) = \frac{C({w}_{n-1}{w}_{n})+k}{C({w}_{n-1})+kV}$
+
 ## 3.6.3 Backoff and Interpolation
+
+
 
 # 3.7 Huge Language Models and Stupid Backoff
