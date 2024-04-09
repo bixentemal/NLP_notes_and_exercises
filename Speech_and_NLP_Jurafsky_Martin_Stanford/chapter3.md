@@ -309,6 +309,24 @@ ${P}^*_{Add-k}({w}_i) = \frac{C({w}_{n-1}{w}_{n})+k}{C({w}_{n-1})+kV}$
 
 ## 3.6.3 Backoff and Interpolation
 
+If we are trying to compute P(wn|wn−2wn−1) but we have no examples of a particular trigram wn−2wn−1wn, we can instead estimate its probability by using the bigram probability P(wn|wn−1). Similarly, if we don’t have counts to compute P(wn|wn−1), we can look to the unigram P(wn).
 
+In <b>backoff</b>, we use the trigram if the evidence is sufficient, otherwise we use the bigram, otherwise the unigram. In other words, we only “back off” to a lower-order n-gram if we have zero evidence for a higher-order n-gram
+
+In <b>interpolation</b>, we always mix the probability estimates from all the n-gram estimators, weighting and combining the trigram, bigram, and unigram counts.
+
+Example of simple linear interpolation :
+
+Pˆ(wn|wn−2wn−1) = λ1P(wn)
++λ2 P(wn |wn−1 )
++λ3 P(wn |wn−2 wn−1 )
+
+The λs must sum to 1.
+
+the equation for interpolation with context-conditioned weights:
+
+Pˆ(wn|wn−2wn−1) = λ1(wn−2:n−1)P(wn)
++λ2 (wn−2:n−1 )P(wn |wn−1 )
++λ3 (wn−2:n−1 )P(wn |wn−2 wn−1 )
 
 # 3.7 Huge Language Models and Stupid Backoff
