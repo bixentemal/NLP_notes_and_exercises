@@ -329,4 +329,44 @@ Pˆ(wn|wn−2wn−1) = λ1(wn−2:n−1)P(wn)
 +λ2 (wn−2:n−1 )P(wn |wn−1 )
 +λ3 (wn−2:n−1 )P(wn |wn−2 wn−1 )
 
+How are these λ values set? Both the simple interpolation and conditional interpo- lation λs are learned from a <b>held-out</b> corpus. A held-out corpus is an additional training corpus, so-called because we hold it out from the training data, that we use to set hyperparameters like these λ values.
+
+For thebackoff model to give a proba distribution, we need to discount the higher-order n-grams to save some probability mass for the lower order n-grams (as we did for Laplace smoothing)
+
 # 3.7 Huge Language Models and Stupid Backoff
+
+some n gram corpus :
+
+- The Web 1 Trillion 5-gram corpus released by Google includes various large sets of n-grams, including 1-grams through 5-grams ([http://googleresearch.blogspot.com/ 2006/08/all- our- n- gram- are- belong- to- you. html](https://research.google/blog/all-our-n-gram-are-belong-to-you/))
+- Google Books Ngrams corpora with n-grams drawn from their book collections, including another 800 billion tokens of n-grams from Chinese, English, French, German, Hebrew, Italian, Russian, and Spanish (https://aclanthology.org/P12-3029/)
+- Smaller but more carefully curated n-gram corpora for English include the million most frequent n-grams drawn from the COCA (Corpus of Contempo- rary American English) 1 billion word corpus of American English (https://www.english-corpora.org/coca/)
+
+Important consideration when building a ngram model :
+- each words represented as a hash (with the words themselves stored on disk)
+- Probabilities are generally quantized using only 4-8 bits (instead of 8-byte floats)
+- n-grams are stored in reverse tries.
+- an also be shrunk by pruning, for example only storing n-grams with counts greater than some threshold
+- Another option is to build approximate language models using techniques like Bloom filters
+
+ <b>Stupid backoff</b> gives up the idea of trying to make the language model a true probability distribution. There is <b>no discounting</b> of the higher-order probabilities.
+ If a higher-order n-gram has a zero count, we simply backoff to a lower order n-gram, weighed by a fixed (context-independent) weight. This algorithm does not produce a probability distribution (The sum of all probabilities over all possible outcomes are not equal to 1)
+
+# 3.8 Advanced: Kneser-Ney Smoothing
+# 3.9 Advanced: Perplexity’s Relation to Entropy
+# 3.10 : Summary
+
+This chapter introduced language modeling and the n-gram, one of the most widely used tools in language processing.
+
+• Language models offer a way to assign a probability to a sentence or other sequence of words, and to predict a word from preceding words.
+
+• n-grams are Markov models that estimate words from a fixed window of pre- vious words. n-gram probabilities can be estimated by counting in a corpus and normalizing (the maximum likelihood estimate).
+
+• n-gram language models are evaluated extrinsically in some task, or intrinsi- cally using perplexity.
+
+• The perplexity of a test set according to a language model is the geometric mean of the inverse test set probability computed by the model.
+
+• Smoothing algorithms provide a more sophisticated way to estimate thep rob- ability of n-grams. Commonly used smoothing algorithms for n-grams rely on lower-order n-gram counts through backoff or interpolation.
+
+• Both backoff and interpolation require discounting to createa probability dis- tribution.
+
+• Kneser-Ney smoothing makes use of the probability of a word being a novel continuation. The interpolated Kneser-Ney smoothing algorithm mixes a discounted probability with a lower-order continuation probability.
