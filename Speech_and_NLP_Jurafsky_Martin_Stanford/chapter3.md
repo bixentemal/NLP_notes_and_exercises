@@ -35,6 +35,13 @@ For the joint probability of each word in a se- quence having a particular value
 
 chain rule of probability:
 
+Recall the definition of conditional probabilities :
+<pre>
+p(B|A)=P(A,B)/P(A) 
+
+Rewriting: P(A,B)=P(A)P(B|A)
+</pre>
+
 P(X1...Xn) = P(X1) P(X2|X1) P(X3|X1:2) ... P(Xn|X1:n−1) 
 
 = $\prod_{k = 1}^{n} P(Xk|X1:k−1)$
