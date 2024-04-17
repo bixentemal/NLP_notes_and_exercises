@@ -121,7 +121,7 @@ class MyTestCase(unittest.TestCase):
         unigrams = count_stats(tokens_with_seos, n=1)
         unigrams_as_m = matrixize(unigrams, n=1)
         vocab = [v for v, _ in unigrams]
-        unigrams_proba = list(map(lambda x: float(float(x) / len(vocab)), unigrams_as_m[0]))
+        unigrams_proba = list(map(lambda x: float(float(x) / len(tokens_with_seos)), unigrams_as_m[0]))
         res = sample_sentence("the", unigrams_proba, vocab, n=1)
         print(res)
         #self.assertEqual(True, False)  # add assertion here
@@ -144,18 +144,16 @@ class MyTestCase(unittest.TestCase):
         unigrams_as_m = matrixize(unigrams, n=1)
         total = unigrams_as_m[0]
         vocab = [v for v, _ in unigrams]
-        unigrams_model = list(map(lambda x: float(float(x) / len(vocab)), unigrams_as_m[0]))
+        unigrams_model = list(map(lambda x: float(float(x) / len(tokens_with_seos)), unigrams_as_m[0]))
         bigrams = count_stats(tokens_with_seos, n=2)
         bigrams_as_m = matrixize(bigrams, n=2)
         bigram_model_smoothed = apply_transformation(bigrams_as_m, total, len(vocab), laplace)
-
-        perplexity_sample = "<s> once upon a time there was a little boy named tim </s> <s> tim had a big orange ball </s> <s> he loved his ball very much </s> <s> one day tim met a girl named sue </s> <s> sue had a pretty doll </s> <s> tim liked sue s doll and sue liked tim s orange ball </s> <s> tim and sue thought about a trade </s> <s> they would trade the ball for the doll </s> <s> tim was not sure </s> "
-
+        #perplexity_sample = "<s> once upon a time there was a little boy named tim tim had a big orange ball  one day tim met a girl named sue </s> <s> sue had a pretty doll </s> <s> tim liked sue s doll and sue liked tim s orange ball </s> <s> tim and sue thought about a trade </s> <s> they would trade the ball for the doll </s> <s> tim was not sure </s> "
+        perplexity_sample = " ".join(tokens_with_seos[10:50])
         punigram = perplexity(unigrams_model, vocab, perplexity_sample, n=1)
-        print(punigram)
-        print()
+        print("Perplexity unigram = \t\t\t"+str(punigram))
         pbigram = perplexity(bigram_model_smoothed, vocab, perplexity_sample, n=2)
-        print(pbigram)
+        print("Perplexity (smoothed) bigram = \t"+str(pbigram))
 
 
 
