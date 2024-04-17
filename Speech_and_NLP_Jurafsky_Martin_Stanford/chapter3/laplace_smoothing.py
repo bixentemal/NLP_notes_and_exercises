@@ -37,6 +37,7 @@ class MyTestCase(unittest.TestCase):
             result.append(result_row)
             row_index += 1
         print(tabulate(result))
+        print(result)
 
     def test_bigram_mle(self):
         self.apply(self.mle)
