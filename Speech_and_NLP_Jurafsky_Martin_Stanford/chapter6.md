@@ -56,6 +56,13 @@ ex : battle is [1, 0, 7, 13]
 
 Information retrieval (IR) is the task of finding the document d from the D documents in some collection that best matches a query q.
 
+## 6.3.2 Words as vectors: document dimensions
+
+row vector
+
+## 6.3.3 Words as vectors: word dimensions
+
+word-word matrix
 
 ## 6.4 Cosine for measuring similarity
 
@@ -66,13 +73,14 @@ To measure similarity between two target words v and w
 
 By far the most common similarity metric is the cosine of the angle between the vectors.
 
-The cosine is baed on the dot product (also called the inner product)
+The cosine is based on the dot product (also called the inner product)
 
 $dot product(v,w) = v·w = \sum_{i=1}^{N}{v_{i}w_{j}}$
 
 This raw dot product, however, has a problem as a similarity metric: it favors long vectors. 
 
-This normalized dot product turns out to be the same as the cosine of the angle between the two vectors, following from the definition of the dot product between two vectors a and b:
+The dot product is higher if a vector is longer, with higher values in each dimension. More frequent words have longer vectors, since they tend to co-occur with more words and have higher co-occurrence values with each of them. The raw dot product thus will be higher for frequent words. But this is a problem; we’d like a similarity metric that tells us how similar two words are regardless of their frequency.
+The normalized dot product turns out to be the same as the cosine of the angle between the two vectors, following from the definition of the dot product between two vectors a and b:
 
 a·b = |a||b|cosθ
 
@@ -81,3 +89,11 @@ The cosine similarity metric between two vectors v and w thus can be computed as
 with vector len :
 
 $ |v| = \sqrt{\sum_{i=1}^{N}{v_{i}^{2}}}  $
+
+$ cosine(a, b) = \frac{a·b}{|a||b|}$
+
+For some applications we pre-normalize each vector, by dividing it by its length, creating a <b>unit vector</b> of length 1. Thus we could compute a unit vector from a by dividing it by |a|. For unit vectors, the dot product is the same as the cosine.
+
+
+## 6.5 TF-IDF: Weighing terms in the vector
+
